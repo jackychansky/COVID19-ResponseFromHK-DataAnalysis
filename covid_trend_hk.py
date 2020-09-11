@@ -2,6 +2,9 @@ import requests
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+from matplotlib import rcParams
+rcParams['figure.figsize'] =  20, 10
 
 # Extract data via API from HKGOV
 url = "https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Flatest_situation_of_reported_cases_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%2C%22sorts%22%3A%5B%5B1%2C%22asc%22%5D%5D%7D"
@@ -22,8 +25,8 @@ df_covid['Date'] = pd.to_datetime(df_covid['Date'], dayfirst=True)
 df_covid.sort_values(by="Date", inplace=True)
 df_covid.set_index("Date", inplace=True)
 
-
-
+covid_fig = df_covid.plot(figsize = (20,10))
+covid_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_hk.png")
 
 # Convert the cumulative frequency graph to normal frequency graph
 confirmed_new = []
@@ -39,4 +42,113 @@ df_covidnew = pd.DataFrame({"Date": list(df_covid.index), "Confirmed": confirmed
 
 df_covidnew.set_index("Date", inplace=True)
 
-df_covidnew.plot().get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/omg.png")
+covidnew_fig = df_covidnew.plot(figsize = (20,10))
+covidnew_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.png")
+
+# Extract Singapore data via API from Postman
+
+url = "https://covid19-api.org/api/timeline/SG"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+
+# Initialize the primary dataframe for SG
+data_sg = json.loads(response.text.encode('utf8'))
+df_covid_sg = pd.DataFrame(data_sg)
+df_covid_sg = df_covid_sg[["last_update", "cases", "deaths"]]
+df_covid_sg.rename(columns={"last_update": "Date", "cases": "Confirmed", "deaths": "Death"}, inplace=True)
+
+df_covid_sg['Date'] = pd.to_datetime(df_covid_sg['Date']).dt.strftime('%Y-%m-%d')
+df_covid_sg.sort_values(by="Date", inplace=True)
+df_covid_sg.set_index("Date", inplace=True)
+
+covidcum_sg_fig = df_covid_sg.plot(figsize = (20,10))
+covidcum_sg_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_sg.png")
+
+# Convert the cumulative frequency graph to normal frequency graph for SG
+
+confirmed_new = []
+death_new = []
+confirmed_new.append(df_covid_sg["Confirmed"][0])
+death_new.append(df_covid_sg["Death"][0])
+for n in range(1, len(df_covid_sg.index)):
+    confirmed_new.append(df_covid_sg["Confirmed"][n] - df_covid_sg["Confirmed"][n-1])
+    death_new.append(df_covid_sg["Death"][n] - df_covid_sg["Death"][n-1])
+
+df_covidnew_sg = pd.DataFrame({"Date": list(df_covid_sg.index), "Confirmed": confirmed_new, "Death": death_new})
+df_covidnew_sg.set_index("Date", inplace=True)
+
+covidnew_sg_fig = df_covidnew.plot(figsize = (20,10))
+covidnew_sg_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_sg.png")
+
+# Extract Taiwan data via API from Postman
+url = "https://covid19-api.org/api/timeline/TW"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+data_tw = json.loads(response.text.encode('utf8'))
+
+# Initialize the primary dataframe for TW
+df_covid_tw = pd.DataFrame(data_tw)
+df_covid_tw = df_covid_tw[["last_update", "cases", "deaths"]]
+df_covid_tw.rename(columns={"last_update": "Date", "cases": "Confirmed", "deaths": "Death"}, inplace=True)
+
+df_covid_tw['Date'] = pd.to_datetime(df_covid_tw['Date']).dt.strftime('%Y-%m-%d')
+df_covid_tw.sort_values(by="Date", inplace=True)
+df_covid_tw.set_index("Date", inplace=True)
+
+covidcum_tw_fig = df_covid_tw.plot(figsize = (20,10))
+covidcum_tw_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_tw.png")
+
+# Convert the cumulative frequency graph to normal frequency graph for TW
+confirmed_new = []
+death_new = []
+confirmed_new.append(df_covid_tw["Confirmed"][0])
+death_new.append(df_covid_tw["Death"][0])
+for n in range(1, len(df_covid_tw.index)):
+    confirmed_new.append(df_covid_tw["Confirmed"][n] - df_covid_tw["Confirmed"][n-1])
+    death_new.append(df_covid_tw["Death"][n] - df_covid_tw["Death"][n-1])
+
+df_covidnew_tw = pd.DataFrame({"Date": list(df_covid_tw.index), "Confirmed": confirmed_new, "Death": death_new})
+
+df_covidnew_tw.set_index("Date", inplace=True)
+covidnew_tw_fig = df_covidnew_tw.plot(figsize = (20,10))
+covidnew_tw_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_tw.png")
+
+# Extract data via API from HKGOV for imported cases
+
+import requests
+
+url = "https://api.data.gov.hk/v2/filter?q=%7B%22resource%22%3A%22http%3A%2F%2Fwww.chp.gov.hk%2Ffiles%2Fmisc%2Fenhanced_sur_covid_19_eng.csv%22%2C%22section%22%3A1%2C%22format%22%3A%22json%22%7D"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+
+raw_covid_details = json.loads(response.text)
+
+df_covid_details = pd.DataFrame(raw_covid_details)
+df_covid_details = df_covid_details[["Report date", "HK/Non-HK resident", "Case classification*"]]
+df_covid_details.rename(columns={"Report date": "Date", "HK/Non-HK resident": "HK/Non-HK", "Case classification*": "Classification"}, inplace=True)
+
+df_covid_details['Date'] = pd.to_datetime(df_covid_details['Date'], dayfirst=True)
+df_covid_details.sort_values(by="Date", inplace=True)
+df_covid_details.set_index("Date", inplace=True)
+
+# Group the data to focus on Classification only
+
+grouped = df_covid_details.groupby(df_covid_details.index)["Classification"].value_counts()
+list_date = [grouped.index[n][0] for n in range(len(grouped))]
+list_class = [grouped.index[n][1] for n in range(len(grouped))]
+list_value = [grouped[n] for n in range(len(grouped))]
+df_group = pd.DataFrame(list(zip(list_date, list_class, list_value)), columns=["Date", "Classification", "Total"])
+df_group = df_group.set_index("Date")
+
+covid_class = sns.lineplot(x = df_group.index, y = df_group["Total"], hue = df_group["Classification"])
+
+covid_class.get_figure().savefig("covidclass_hk.png")

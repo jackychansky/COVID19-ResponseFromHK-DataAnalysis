@@ -25,7 +25,7 @@ df_covid['Date'] = pd.to_datetime(df_covid['Date'], dayfirst=True)
 df_covid.sort_values(by="Date", inplace=True)
 df_covid.set_index("Date", inplace=True)
 
-covid_fig = df_covid.plot(figsize = (20,10))
+covid_fig = df_covid.plot(figsize = (20,10), title="Cumulative Covid Cases in Hong Kong")
 covid_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_hk.png")
 
 # Convert the cumulative frequency graph to normal frequency graph
@@ -42,7 +42,7 @@ df_covidnew = pd.DataFrame({"Date": list(df_covid.index), "Confirmed": confirmed
 
 df_covidnew.set_index("Date", inplace=True)
 
-covidnew_fig = df_covidnew.plot(figsize = (20,10))
+covidnew_fig = df_covidnew.plot(figsize = (20,10), title="New Covid Cases in Hong Kong")
 covidnew_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.png")
 
 # Extract Singapore data via API from Postman
@@ -64,7 +64,7 @@ df_covid_sg['Date'] = pd.to_datetime(df_covid_sg['Date']).dt.strftime('%Y-%m-%d'
 df_covid_sg.sort_values(by="Date", inplace=True)
 df_covid_sg.set_index("Date", inplace=True)
 
-covidcum_sg_fig = df_covid_sg.plot(figsize = (20,10))
+covidcum_sg_fig = df_covid_sg.plot(figsize = (20,10), title="Cumulative Covid Cases in Singapore")
 covidcum_sg_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_sg.png")
 
 # Convert the cumulative frequency graph to normal frequency graph for SG
@@ -80,7 +80,7 @@ for n in range(1, len(df_covid_sg.index)):
 df_covidnew_sg = pd.DataFrame({"Date": list(df_covid_sg.index), "Confirmed": confirmed_new, "Death": death_new})
 df_covidnew_sg.set_index("Date", inplace=True)
 
-covidnew_sg_fig = df_covidnew.plot(figsize = (20,10))
+covidnew_sg_fig = df_covidnew.plot(figsize = (20,10), title="New Covid Cases in Singapore")
 covidnew_sg_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_sg.png")
 
 # Extract Taiwan data via API from Postman
@@ -101,7 +101,7 @@ df_covid_tw['Date'] = pd.to_datetime(df_covid_tw['Date']).dt.strftime('%Y-%m-%d'
 df_covid_tw.sort_values(by="Date", inplace=True)
 df_covid_tw.set_index("Date", inplace=True)
 
-covidcum_tw_fig = df_covid_tw.plot(figsize = (20,10))
+covidcum_tw_fig = df_covid_tw.plot(figsize = (20,10), title="Cumulative Covid Cases in Taiwan")
 covidcum_tw_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_tw.png")
 
 # Convert the cumulative frequency graph to normal frequency graph for TW
@@ -116,7 +116,7 @@ for n in range(1, len(df_covid_tw.index)):
 df_covidnew_tw = pd.DataFrame({"Date": list(df_covid_tw.index), "Confirmed": confirmed_new, "Death": death_new})
 
 df_covidnew_tw.set_index("Date", inplace=True)
-covidnew_tw_fig = df_covidnew_tw.plot(figsize = (20,10))
+covidnew_tw_fig = df_covidnew_tw.plot(figsize = (20,10), title="New Covid Cases in Taiwan")
 covidnew_tw_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_tw.png")
 
 # Extract data via API from HKGOV for imported cases
@@ -141,6 +141,7 @@ df_covid_details.sort_values(by="Date", inplace=True)
 df_covid_details.set_index("Date", inplace=True)
 
 # Group the data to focus on Classification only
+plt.close("all")
 
 grouped = df_covid_details.groupby(df_covid_details.index)["Classification"].value_counts()
 list_date = [grouped.index[n][0] for n in range(len(grouped))]
@@ -149,6 +150,6 @@ list_value = [grouped[n] for n in range(len(grouped))]
 df_group = pd.DataFrame(list(zip(list_date, list_class, list_value)), columns=["Date", "Classification", "Total"])
 df_group = df_group.set_index("Date")
 
-covid_class = sns.lineplot(x = df_group.index, y = df_group["Total"], hue = df_group["Classification"])
+covid_class = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"], hue = df_group["Classification"]).set_title("Classification of Covid Cases in Hong Kong")
 
-covid_class.get_figure().savefig("covidclass_hk.png")
+covid_class.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidclass_hk.png")

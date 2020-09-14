@@ -42,6 +42,8 @@ df_covidnew = pd.DataFrame({"Date": list(df_covid.index), "Confirmed": confirmed
 
 df_covidnew.set_index("Date", inplace=True)
 
+df_covidnew.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.xlsx")
+
 covidnew_fig = df_covidnew.plot(figsize = (20,10), title="New Covid Cases in Hong Kong")
 covidnew_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.png")
 
@@ -118,6 +120,83 @@ df_covidnew_tw = pd.DataFrame({"Date": list(df_covid_tw.index), "Confirmed": con
 df_covidnew_tw.set_index("Date", inplace=True)
 covidnew_tw_fig = df_covidnew_tw.plot(figsize = (20,10), title="New Covid Cases in Taiwan")
 covidnew_tw_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_tw.png")
+
+# Extract Korea data via API from Postman
+
+url = "https://covid19-api.org/api/timeline/KR"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+
+# Initialize the primary dataframe for KR
+data_kr = json.loads(response.text.encode('utf8'))
+df_covid_kr = pd.DataFrame(data_kr)
+df_covid_kr = df_covid_kr[["last_update", "cases", "deaths"]]
+df_covid_kr.rename(columns={"last_update": "Date", "cases": "Confirmed", "deaths": "Death"}, inplace=True)
+
+df_covid_kr['Date'] = pd.to_datetime(df_covid_kr['Date']).dt.strftime('%Y-%m-%d')
+df_covid_kr.sort_values(by="Date", inplace=True)
+df_covid_kr.set_index("Date", inplace=True)
+
+covidcum_kr_fig = df_covid_kr.plot(figsize = (20,10), title="Cumulative Covid Cases in Singapore")
+covidcum_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_sg.png")
+
+# Convert the cumulative frequency graph to normal frequency graph for SG
+
+confirmed_new = []
+death_new = []
+confirmed_new.append(df_covid_kr["Confirmed"][0])
+death_new.append(df_covid_kr["Death"][0])
+for n in range(1, len(df_covid_kr.index)):
+    confirmed_new.append(df_covid_kr["Confirmed"][n] - df_covid_kr["Confirmed"][n-1])
+    death_new.append(df_covid_kr["Death"][n] - df_covid_kr["Death"][n-1])
+
+df_covidnew_kr = pd.DataFrame({"Date": list(df_covid_kr.index), "Confirmed": confirmed_new, "Death": death_new})
+df_covidnew_kr.set_index("Date", inplace=True)
+
+covidnew_kr_fig = df_covidnew_kr.plot(figsize = (20,10), title="New Covid Cases in Korea")
+covidnew_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_kr.png")
+
+# Extract USA data via API from Postman
+
+url = "https://covid19-api.org/api/timeline/US"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+
+# Initialize the primary dataframe for US
+
+data_us = json.loads(response.text.encode('utf8'))
+df_covid_us = pd.DataFrame(data_us)
+df_covid_us = df_covid_us[["last_update", "cases", "deaths"]]
+df_covid_us.rename(columns={"last_update": "Date", "cases": "Confirmed", "deaths": "Death"}, inplace=True)
+
+df_covid_us['Date'] = pd.to_datetime(df_covid_us['Date']).dt.strftime('%Y-%m-%d')
+df_covid_us.sort_values(by="Date", inplace=True)
+df_covid_us.set_index("Date", inplace=True)
+
+covidcum_us_fig = df_covid_us.plot(figsize = (20,10), title="Cumulative Covid Cases in USA")
+covidcum_us_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_us.png")
+
+# Convert the cumulative frequency graph to normal frequency graph for SG
+
+confirmed_new = []
+death_new = []
+confirmed_new.append(df_covid_kr["Confirmed"][0])
+death_new.append(df_covid_kr["Death"][0])
+for n in range(1, len(df_covid_kr.index)):
+    confirmed_new.append(df_covid_kr["Confirmed"][n] - df_covid_kr["Confirmed"][n-1])
+    death_new.append(df_covid_kr["Death"][n] - df_covid_kr["Death"][n-1])
+
+df_covidnew_kr = pd.DataFrame({"Date": list(df_covid_kr.index), "Confirmed": confirmed_new, "Death": death_new})
+df_covidnew_kr.set_index("Date", inplace=True)
+
+covidnew_kr_fig = df_covidnew_kr.plot(figsize = (20,10), title="New Covid Cases in Korea")
+covidnew_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_kr.png")
 
 # Extract data via API from HKGOV for imported cases
 

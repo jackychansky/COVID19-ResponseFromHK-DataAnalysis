@@ -278,6 +278,8 @@ list_value = [grouped[n] for n in range(len(grouped))]
 df_group = pd.DataFrame(list(zip(list_date, list_class, list_value)), columns=["Date", "Classification", "Total"])
 df_group = df_group.set_index("Date")
 
+df_group.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidhk_class.xlsx")
+
 covid_class = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"], hue = df_group["Classification"]).set_title("Classification of Covid Cases in Hong Kong")
 
 covid_class.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidclass_hk.png")

@@ -283,3 +283,14 @@ df_group.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidhk_class.xlsx")
 covid_class = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"], hue = df_group["Classification"]).set_title("Classification of Covid Cases in Hong Kong")
 
 covid_class.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidclass_hk.png")
+
+# Only show imported cases of Hong Kong
+
+plt.close("all")
+
+df_group["Classification"] = df_group[df_group["Classification"] == "Imported case"]
+df_group.dropna(subset = ["Classification"], inplace=True)
+covid_class_imported = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"]).set_title("Imported Cases of Covid Cases in Hong Kong")
+
+covid_class_imported.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidimported_hk.png")
+df_group.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidhk_imported.xlsx")

@@ -140,10 +140,10 @@ df_covid_kr['Date'] = pd.to_datetime(df_covid_kr['Date']).dt.strftime('%Y-%m-%d'
 df_covid_kr.sort_values(by="Date", inplace=True)
 df_covid_kr.set_index("Date", inplace=True)
 
-covidcum_kr_fig = df_covid_kr.plot(figsize = (20,10), title="Cumulative Covid Cases in Singapore")
-covidcum_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_sg.png")
+covidcum_kr_fig = df_covid_kr.plot(figsize = (20,10), title="Cumulative Covid Cases in Korea")
+covidcum_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_kr.png")
 
-# Convert the cumulative frequency graph to normal frequency graph for SG
+# Convert the cumulative frequency graph to normal frequency graph for KR
 
 confirmed_new = []
 death_new = []
@@ -182,21 +182,21 @@ df_covid_us.set_index("Date", inplace=True)
 covidcum_us_fig = df_covid_us.plot(figsize = (20,10), title="Cumulative Covid Cases in USA")
 covidcum_us_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_us.png")
 
-# Convert the cumulative frequency graph to normal frequency graph for SG
+# Convert the cumulative frequency graph to normal frequency graph for US
 
 confirmed_new = []
 death_new = []
-confirmed_new.append(df_covid_kr["Confirmed"][0])
-death_new.append(df_covid_kr["Death"][0])
-for n in range(1, len(df_covid_kr.index)):
-    confirmed_new.append(df_covid_kr["Confirmed"][n] - df_covid_kr["Confirmed"][n-1])
-    death_new.append(df_covid_kr["Death"][n] - df_covid_kr["Death"][n-1])
+confirmed_new.append(df_covid_us["Confirmed"][0])
+death_new.append(df_covid_us["Death"][0])
+for n in range(1, len(df_covid_us.index)):
+    confirmed_new.append(df_covid_us["Confirmed"][n] - df_covid_us["Confirmed"][n-1])
+    death_new.append(df_covid_us["Death"][n] - df_covid_us["Death"][n-1])
 
-df_covidnew_kr = pd.DataFrame({"Date": list(df_covid_kr.index), "Confirmed": confirmed_new, "Death": death_new})
-df_covidnew_kr.set_index("Date", inplace=True)
+df_covidnew_us = pd.DataFrame({"Date": list(df_covid_us.index), "Confirmed": confirmed_new, "Death": death_new})
+df_covidnew_us.set_index("Date", inplace=True)
 
-covidnew_kr_fig = df_covidnew_kr.plot(figsize = (20,10), title="New Covid Cases in Korea")
-covidnew_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_kr.png")
+covidnew_us_fig = df_covidnew_us.plot(figsize = (20,10), title="New Covid Cases in USA")
+covidnew_us_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_us.png")
 
 # Extract data via API from HKGOV for imported cases
 

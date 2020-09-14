@@ -82,6 +82,8 @@ for n in range(1, len(df_covid_sg.index)):
 df_covidnew_sg = pd.DataFrame({"Date": list(df_covid_sg.index), "Confirmed": confirmed_new, "Death": death_new})
 df_covidnew_sg.set_index("Date", inplace=True)
 
+df_covidnew_sg.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_sg.xlsx")
+
 covidnew_sg_fig = df_covidnew.plot(figsize = (20,10), title="New Covid Cases in Singapore")
 covidnew_sg_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_sg.png")
 
@@ -116,6 +118,8 @@ for n in range(1, len(df_covid_tw.index)):
     death_new.append(df_covid_tw["Death"][n] - df_covid_tw["Death"][n-1])
 
 df_covidnew_tw = pd.DataFrame({"Date": list(df_covid_tw.index), "Confirmed": confirmed_new, "Death": death_new})
+
+df_covidnew_tw.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_tw.xlsx")
 
 df_covidnew_tw.set_index("Date", inplace=True)
 covidnew_tw_fig = df_covidnew_tw.plot(figsize = (20,10), title="New Covid Cases in Taiwan")
@@ -156,6 +160,8 @@ for n in range(1, len(df_covid_kr.index)):
 df_covidnew_kr = pd.DataFrame({"Date": list(df_covid_kr.index), "Confirmed": confirmed_new, "Death": death_new})
 df_covidnew_kr.set_index("Date", inplace=True)
 
+df_covidnew_kr.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_kr.xlsx")
+
 covidnew_kr_fig = df_covidnew_kr.plot(figsize = (20,10), title="New Covid Cases in Korea")
 covidnew_kr_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_kr.png")
 
@@ -195,8 +201,51 @@ for n in range(1, len(df_covid_us.index)):
 df_covidnew_us = pd.DataFrame({"Date": list(df_covid_us.index), "Confirmed": confirmed_new, "Death": death_new})
 df_covidnew_us.set_index("Date", inplace=True)
 
+df_covidnew_us.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_us.xlsx")
+
 covidnew_us_fig = df_covidnew_us.plot(figsize = (20,10), title="New Covid Cases in USA")
 covidnew_us_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_us.png")
+
+# Extract Japan data via API from Postman
+
+url = "https://covid19-api.org/api/timeline/JP"
+
+payload = {}
+headers= {}
+
+response = requests.request("GET", url, headers=headers, data = payload)
+
+# Initialize the primary dataframe for JP
+
+data_jp = json.loads(response.text.encode('utf8'))
+df_covid_jp = pd.DataFrame(data_jp)
+df_covid_jp = df_covid_jp[["last_update", "cases", "deaths"]]
+df_covid_jp.rename(columns={"last_update": "Date", "cases": "Confirmed", "deaths": "Death"}, inplace=True)
+
+df_covid_jp['Date'] = pd.to_datetime(df_covid_jp['Date']).dt.strftime('%Y-%m-%d')
+df_covid_jp.sort_values(by="Date", inplace=True)
+df_covid_jp.set_index("Date", inplace=True)
+
+covidcum_jp_fig = df_covid_jp.plot(figsize = (20,10), title="Cumulative Covid Cases in Japan")
+covidcum_jp_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidcum_jp.png")
+
+# Convert the cumulative frequency graph to normal frequency graph for JP
+
+confirmed_new = []
+death_new = []
+confirmed_new.append(df_covid_jp["Confirmed"][0])
+death_new.append(df_covid_jp["Death"][0])
+for n in range(1, len(df_covid_jp.index)):
+    confirmed_new.append(df_covid_jp["Confirmed"][n] - df_covid_jp["Confirmed"][n-1])
+    death_new.append(df_covid_jp["Death"][n] - df_covid_jp["Death"][n-1])
+
+df_covidnew_jp = pd.DataFrame({"Date": list(df_covid_jp.index), "Confirmed": confirmed_new, "Death": death_new})
+df_covidnew_jp.set_index("Date", inplace=True)
+
+df_covidnew_jp.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_jp.xlsx")
+
+covidnew_jp_fig = df_covidnew_jp.plot(figsize = (20,10), title="New Covid Cases in Japan")
+covidnew_jp_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_jp.png")
 
 # Extract data via API from HKGOV for imported cases
 

@@ -45,6 +45,10 @@ df_covidnew.set_index("Date", inplace=True)
 df_covidnew.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.xlsx")
 
 covidnew_fig = df_covidnew.plot(figsize = (20,10), title="New Covid Cases in Hong Kong")
+covidnew_fig.title.set_size(20)
+plt.ylabel("Confirmed Cases", fontsize=20)
+plt.xlabel("Date", fontsize=20)
+plt.legend(prop={"size":20})
 covidnew_fig.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidnew_hk.png")
 
 # Extract Singapore data via API from Postman
@@ -280,8 +284,10 @@ df_group = df_group.set_index("Date")
 
 df_group.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidhk_class.xlsx")
 
-covid_class = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"], hue = df_group["Classification"]).set_title("Classification of Covid Cases in Hong Kong")
-
+covid_class = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"], hue = df_group["Classification"]).set_title("Classification of Covid Cases in Hong Kong", fontsize=20)
+plt.ylabel("Confirmed Cases", fontsize=20)
+plt.xlabel("Date", fontsize=20)
+plt.legend(prop={"size":20})
 covid_class.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidclass_hk.png")
 
 # Only show imported cases of Hong Kong
@@ -293,4 +299,5 @@ df_group.dropna(inplace=True)
 covid_class_imported = sns.lineplot(data = df_group, x = df_group.index, y = df_group["Total"]).set_title("Imported Cases of Covid Cases in Hong Kong")
 
 covid_class_imported.get_figure().savefig("FTDS_Aug2020_GroupProject1_Covid19/covidimported_hk.png")
+
 df_group.to_excel("FTDS_Aug2020_GroupProject1_Covid19/covidhk_imported.xlsx")
